@@ -14,8 +14,9 @@ node_modules/
 .npm
 
 # dotenv environment variables file
+.env
+.env.test
 
 # IDE
 .idea
 .vscode
-config.bat
