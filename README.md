@@ -118,8 +118,12 @@ jobs:
       uses: actions/setup-node@v3
       with:
         node-version: '16.x'
+    - name: Validate lockfile integrity
+      run: npx --yes lockfile-lint --path package-lock.json --type npm --validate-https --allowed-hosts npm
     - name: Install npm dependencies
-      run: npm install
+      run: npm install --ignore-scripts
+    - name: Verify dependency signatures
+      run: npm audit signatures
     - name: Run build task
       run: npm run build --if-present
     - name: Deploy to Server
@@ -166,3 +170,11 @@ Check .github/workflows/e2e.yml for an example
 ## Disclaimer
 
 Check your keys. Check your deployment paths. And use at your own risk.
+
+## CI security
+
+CI hardening against supply-chain attacks:
+
+- `npm ci --ignore-scripts` — pinned install, no package lifecycle (`postinstall`) scripts
+- `lockfile-lint` — validates `package-lock.json` resolved URLs (https + allowed registry hosts)
+- `npm audit signatures` — verifies npm registry signatures
