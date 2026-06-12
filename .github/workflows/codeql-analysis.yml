@@ -38,10 +38,13 @@ jobs:
       uses: github/codeql-action/init@v2
       with:
         languages: ${{ matrix.language }}
-
+    - name: Validate lockfile integrity
+      run: npx --yes lockfile-lint --path package-lock.json --type npm --validate-https --allowed-hosts npm
     - run: |
-        npm ci
+        npm ci --ignore-scripts
         npm run build --if-present
+    - name: Verify dependency signatures
+      run: npm audit signatures
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v2
